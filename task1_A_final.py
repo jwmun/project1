@@ -104,32 +104,31 @@ class TaskA:
                     data_number = 0
 
 
-    def test(self):
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True
+    def test():
         with tf.Session(config=config) as sess:
             sess.run(tf.global_variables_initializer())
             mean_loss = 0
             mean_rs = 0
-            self.saver.restore(sess, './saved_model/task1_ver3')
-            for i in range(self.num_test):
+            saver.restore(sess, './saved_model/task1_ver2')
+            num_test = len(final_test_data)
+            for i in range(num_test):
 
-                batch_data, batch_items, correct_index = self.data.MakeEmbeddingVector_task1(self.final_test_data[i])
-                batch_data  = np.asarray(batch_data)
-                batch_items = np.asarray(batch_items)
+                    batch_data, batch_items, correct_index = MakeEmbeddingVector3(final_test_data[i])
+                    batch_data  = np.asarray(batch_data)
+                    batch_items = np.asarray(batch_items)
 
-                #sess.run(optimizer, feed_dict = {train_data : batch_data, train_items : batch_items, train_index : correct_index})
-                ls = sess.run(self.loss2, feed_dict = {self.train_data : batch_data, self.train_items : batch_items, self.train_index : correct_index})
-                _score = sess.run(self.scores, feed_dict = {self.train_data : batch_data, self.train_items : batch_items, self.train_index : correct_index})
-                if(len(_score) == 1):
-                    current_rs = 1
-                else:
-                    current_rs = self.data.get_MRS(_score, correct_index[0])
+                    #sess.run(optimizer, feed_dict = {train_data : batch_data, train_items : batch_items, train_index : correct_index})
+                    #ls = sess.run(loss2, feed_dict = {train_data : batch_data, train_items : batch_items, train_index : correct_index})
+                    _score = sess.run(scores, feed_dict = {train_data : batch_data, train_items : batch_items})
+                    if(len(_score) == 1):
+                        current_rs = 1
+                    else:
+                        current_rs = get_MRS(_score, correct_index[0])
 
-                mean_rs += current_rs 
-                mean_loss += ls
+                    mean_rs += current_rs 
+                    #mean_loss += ls
 
-            print("mean loss is : ", mean_loss /self.num_test)
-            print("mean reciprocal score is : ", mean_rs /self.num_test)
-            return mean_loss /self.num_test, mean_rs /self.num_test 
+            #print("mean loss is : ", mean_loss /num_test)
+            print("mean reciprocal score is : ", mean_rs /num_test)
+            return mean_loss /num_test, mean_rs /num_test           
 
